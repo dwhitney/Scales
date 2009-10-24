@@ -12,7 +12,7 @@ class ScalesPluginTests extends Spec with MustMatchers with BeforeAndAfter{
 	
 	val pluginRoot = "plugin"
 		
-	class TestProject(info: ProjectInfo) extends DefaultProject(info) with ScalesPlugin{
+	class TestProject(info: ProjectInfo) extends DefaultWebProject(info) with ScalesPlugin{
 		scalesAppDir = path(pluginRoot) / "src" / "main" / "scala" / "scales-app"
 		webAppDir = path(pluginRoot) / "src" / "main" / "webapp"
 	}
@@ -22,11 +22,13 @@ class ScalesPluginTests extends Spec with MustMatchers with BeforeAndAfter{
 	override def beforeEach(){
 		FileUtilities.clean(project.scalesAppDir, new ConsoleLogger)
 		FileUtilities.clean(project.webAppDir, new ConsoleLogger)
+		FileUtilities.clean(project.scalesResourcesDir, new ConsoleLogger)
 	}
 	
 	override def afterEach(){
 		FileUtilities.clean(project.scalesAppDir, new ConsoleLogger)
 		FileUtilities.clean(project.webAppDir, new ConsoleLogger)
+		FileUtilities.clean(project.scalesResourcesDir, new ConsoleLogger)
 	}
 		
 	describe("A ScalesPlugin"){
@@ -44,9 +46,16 @@ class ScalesPluginTests extends Spec with MustMatchers with BeforeAndAfter{
 			val layouts = project.scalesAppDir / "layouts"
 			val components = project.scalesAppDir / "components"
 			
+			val pagesResources = project.scalesResourcesDir / "pages"
+			val layoutsResources = project.scalesResourcesDir / "layouts"
+			val componentsResources = project.scalesResourcesDir / "components"
+			
 			pages.asFile.exists must be(true)
 			layouts.asFile.exists must be(true)
 			components.asFile.exists must be(true)
+			pagesResources.asFile.exists must be(true)
+			layoutsResources.asFile.exists must be(true)
+			componentsResources.asFile.exists must be(true)
 			project.webAppDir.asFile.exists must be(true)
 			
 			(project.webAppDir / "WEB-INF" / "web.xml").asFile.exists must be(true)
