@@ -39,7 +39,6 @@ class ScalesUrlMappingFilter extends Filter{
 				.getRequestDispatcher("/scales.dispatch")
 				.include(request, response) //send request to servlet to see if it can be processed
 			
-			println("blah!")
 			//if the servlet was unable to service this request it sets a NOT_FOUND attribute
 			if(request.getAttribute(ScalesUrlMappingFilter.URL_NOT_FOUND) == ScalesUrlMappingFilter.URL_NOT_FOUND){
 				if(filterChain != null){

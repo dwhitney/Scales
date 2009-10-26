@@ -38,7 +38,7 @@ trait Layout extends Page{
 		
 		override def startElement(uri: String, name: String, qName: String, attributes: Attributes) = {
 			(uri, name) match {
-				case ("http://www.scales.com", "layout") => {
+				case ("http://www.scales-framework.org", "layout") => {
 					var node = nodeMap(attributes.getValue("node")).toString
 					val childrenOnly = attributes.getValue("childrenOnly")
 					if(childrenOnly == "true"){
@@ -57,7 +57,7 @@ trait Layout extends Page{
 
 		override def endElement(uri: String, localName: String, qName: String) = {
 			(uri, localName) match{
-				case ("http://www.scales.com", "layout") => ()
+				case ("http://www.scales-framework.org", "layout") => ()
 				case _ => buffer.append("</" + qName + ">")
 			}
 		}

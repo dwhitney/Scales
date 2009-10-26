@@ -25,7 +25,7 @@ class LayoutTests extends Spec with MustMatchers{
 		
 		it("""must replace the <s:layout node="whatever"/> with the content of the page"""){
 			class TmpLayout extends Layout{
-				override def apply(request: HttpServletRequest, response: HttpServletResponse) = <span xmlns:s="http://www.scales.com"><s:layout node="h1"/></span>
+				override def apply(request: HttpServletRequest, response: HttpServletResponse) = <span xmlns:s="http://www.scales-framework.org"><s:layout node="h1"/></span>
 			}
 			
 			val mockRequest = mock(classOf[HttpServletRequest])
@@ -33,12 +33,12 @@ class LayoutTests extends Spec with MustMatchers{
 			val mockPage = mock(classOf[Page])
 			when(mockPage.apply(mockRequest, mockResponse)).thenReturn(<h1>Hello, World</h1>)
 			
-			new TmpLayout().layoutPage(mockRequest, mockResponse, mockPage) must equal(<span xmlns:s="http://www.scales.com"><h1>Hello, World</h1></span>)
+			new TmpLayout().layoutPage(mockRequest, mockResponse, mockPage) must equal(<span xmlns:s="http://www.scales-framework.org"><h1>Hello, World</h1></span>)
 		}
 		
 		it("""must replace the <s:layout node="whatever" chidrenOnly="true"/> with only the children of the specified elements"""){
 			class TmpLayout extends Layout{
-				override def apply(request: HttpServletRequest, response: HttpServletResponse) = <span xmlns:s="http://www.scales.com"><s:layout node="h1" childrenOnly="true"/></span>
+				override def apply(request: HttpServletRequest, response: HttpServletResponse) = <span xmlns:s="http://www.scales-framework.org"><s:layout node="h1" childrenOnly="true"/></span>
 			}
 			
 			val mockRequest = mock(classOf[HttpServletRequest])
@@ -46,7 +46,7 @@ class LayoutTests extends Spec with MustMatchers{
 			val mockPage = mock(classOf[Page])
 			when(mockPage.apply(mockRequest, mockResponse)).thenReturn(<h1>Hello, World</h1>)
 			
-			new TmpLayout().layoutPage(mockRequest, mockResponse, mockPage) must equal(<span xmlns:s="http://www.scales.com">Hello, World</span>)
+			new TmpLayout().layoutPage(mockRequest, mockResponse, mockPage) must equal(<span xmlns:s="http://www.scales-framework.org">Hello, World</span>)
 		}
 		
 	}

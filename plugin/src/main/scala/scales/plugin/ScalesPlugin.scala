@@ -9,27 +9,30 @@ import scala.actors.Futures._
 import scales.xml.ScalesHandler
 
 trait ScalesPlugin extends DefaultWebProject with WebXML{
-	var scalesAppDir = path("src") / "main" / "scala" / "scales-app"
-	var scalesResourcesDir = path("src") / "main" / "resources" / "scales-app"
-	var webAppDir = path("src") / "main" / "webapp"
+	def scalesAppDir = path("src") / "main" / "scala" / "scales-app"
+	def scalesResourcesDir = path("src") / "main" / "resources" / "scales-app"
+	def webAppDir = path("src") / "main" / "webapp"
+	def pages = scalesAppDir / "pages"
+	def layouts = scalesAppDir / "layouts"
+	def components = scalesAppDir / "components"
+	def config = scalesAppDir / "conf"
 	
 	//managed sources - where the generated code goes
-	var managedSources = path("src_managed") / "main"
-	var managedScalaPath = managedSources / "scala"
-	var managedGeneratedScalaCode = managedScalaPath / "generated"
-	var managedResourcesPath = managedSources / "resources"
+	def managedSources = path("src_managed") / "main"
+	def managedScalaPath = managedSources / "scala"
+	def managedGeneratedScalaCode = managedScalaPath / "generated"
+	def managedResourcesPath = managedSources / "resources"
 	
 	override def mainSourceRoots = super.mainSourceRoots +++ managedScalaPath +++ managedGeneratedScalaCode
 	override def mainResources = super.mainResources +++ descendents(managedResourcesPath ##, "*")
+	override def compileAction = super.compileAction dependsOn(createWebXMLAction) dependsOn(scalesGenerateViews)
+	override def cleanAction = super.compileAction dependsOn(scalesCleanGeneratedViews)
 	
 	
 	/**
 	Initializes a Scales project directory structure
 	**/
 	def initAction = task{
-		val pages = scalesAppDir / "pages"
-		val layouts = scalesAppDir / "layouts"
-		val components = scalesAppDir / "components"
 		
 		val resourcesPages = scalesResourcesDir / "pages"
 		val resourcesLayouts = scalesResourcesDir / "layouts"
@@ -40,6 +43,8 @@ trait ScalesPlugin extends DefaultWebProject with WebXML{
 		if(pages.asFile.exists)	alreadyInitialized = true
 		if(layouts.asFile.exists) alreadyInitialized = true
 		if(components.asFile.exists) alreadyInitialized = true
+		if(config.asFile.exists) alreadyInitialized = true
+		if((config / "Settings.scala").asFile.exists) alreadyInitialized = true
 		if(resourcesPages.asFile.exists) alreadyInitialized = true
 		if(resourcesLayouts.asFile.exists) alreadyInitialized = true
 		if(resourcesComponents.asFile.exists) alreadyInitialized = true
@@ -54,14 +59,53 @@ trait ScalesPlugin extends DefaultWebProject with WebXML{
 			pages.asFile.mkdirs
 			layouts.asFile.mkdirs
 			components.asFile.mkdirs
+			config.asFile.mkdirs
 			
 			resourcesPages.asFile.mkdirs
 			resourcesLayouts.asFile.mkdirs
 			resourcesComponents.asFile.mkdirs
 						
 			createWebXMLAction.run
+			createSettings.run
 			None
 		}
+	}
+	
+	/**
+	creates the conf/Settings.scala file
+	**/
+	def createSettings = task {
+		val settings = """
+package conf
+
+import scales.Page
+import scales.conf.Config
+import pages.Index
+import scala.util.matching.Regex
+
+object Settings extends Config{
+	/*
+	This type is a tuple with the first element being a regular expression extractor 
+	that matches a URL and the second element being any class that extends the Page trait.
+	An instance of the class will be created and invoked when the URL of a given request  
+	matches the regular expression
+	*/
+	type URLMapping = (Regex, Class[P] forSome {type P <: Page})
+
+	/*
+	examples of URL schemes:
+	listed above: """ + "\"\"\"" + """(/""|/index.html)""" + "\"\"\"" + """.r -- will match / or /index.html
+	"/index.html".r -- will only match /index.html
+	""" + "\"\"\"" + """(/""|/index(\.?.{0,4}))""" + "\"\"\"" + """.r -- will match / or /index.html or /index or /index.htm (or any 4 letter extension)
+	""" + "\"\"\"" + """^/([^/]*?)/([^/]*?)(\..*)?$""" + "\"\"\"" + """.r  -- will match /class/id.html or /class/id.html
+	*/
+
+	def urlMappings: List[URLMapping] = (""" + "\"\"\"" + """(/""|/index.html)""" + "\"\"\"" + """.r, classOf[Index]) :: Nil
+
+}		
+"""
+		FileUtilities.append((config / "Settings.scala").asFile, settings, log)
+		None
 	}
 	
 	/**
@@ -96,7 +140,6 @@ trait ScalesPlugin extends DefaultWebProject with WebXML{
 		FileUtilities.clean(managedGeneratedScalaCode, log)
 	}
 	
-	//override def compileAction = super.compileAction dependsOn(generateViews)
 	lazy val scalesGenerateViews = task { 
 			
 		val generatedPages = managedGeneratedScalaCode / "pages"
@@ -121,8 +164,6 @@ trait ScalesPlugin extends DefaultWebProject with WebXML{
 		
 		None 
 	} dependsOn (scalesCleanGeneratedViews)
-		
-	override def compileAction = super.compileAction dependsOn(createWebXMLAction) dependsOn(scalesGenerateViews)
 		
 	def buildFiles(file: File, generatedPath: Path, packageName: String){
 		if(file.isDirectory){

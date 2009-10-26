@@ -20,7 +20,7 @@ object ScalesHandler{
 		}catch{
 			case e: SAXParseException => {
 				//wrap the erroring XML in the ignore tags, and it may parse
-				doParse("<s:ignore xmlns:s='http://www.scales.com'>" + xml + "</s:ignore>")
+				doParse("<s:ignore xmlns:s='http://www.scales-framework.org'>" + xml + "</s:ignore>")
 			}
 		}
 		postProcess(string)
@@ -36,7 +36,7 @@ object ScalesHandler{
 			case e: SAXParseException => {
 				//wrap the erroring XML in ignore tags by reading the lines from the file and creating a string
 				val buffer = new StringBuffer()
-				buffer.append("<s:ignore xmlns:s='http://www.scales.com'>")
+				buffer.append("<s:ignore xmlns:s='http://www.scales-framework.org'>")
 				val myInput = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 				var thisLine = ""
 				while (thisLine != null) {  
@@ -100,12 +100,12 @@ class ScalesHandler extends DefaultHandler{
 	**/
 	override def startElement(uri: String, name: String, qName: String, attributes: Attributes) = {
 		(uri, name) match {
-			case ("http://www.scales.com", "component") => { 
+			case ("http://www.scales-framework.org", "component") => { 
 				appendCodeBegins()
 				tagStack.push((uri, name, attributes)) 
 			}
-			case ("http://www.scales.com", "ignore") => ()
-			case ("http://www.scales.com", "code") => appendCodeBegins()
+			case ("http://www.scales-framework.org", "ignore") => ()
+			case ("http://www.scales-framework.org", "code") => appendCodeBegins()
 			case _ => addToBuffer(uri, name, qName, attributes)
 		}
 		
@@ -117,9 +117,9 @@ class ScalesHandler extends DefaultHandler{
 	override def endElement(uri: String, localName: String, qName: String): Unit = {
 
 		(uri, localName) match {
-			case ("http://www.scales.com", "ignore") => ()
-			case ("http://www.scales.com", "code") => appendCodeEnds
-			case ("http://www.scales.com", "component") => {
+			case ("http://www.scales-framework.org", "ignore") => ()
+			case ("http://www.scales-framework.org", "code") => appendCodeEnds
+			case ("http://www.scales-framework.org", "component") => {
 				val (u, n, att) = tagStack.pop
 				buffer.append(att.getValue(0) + "(request, response)")
 				appendCodeEnds()

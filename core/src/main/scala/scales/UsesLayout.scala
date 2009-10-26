@@ -1,5 +1,5 @@
 package scales
 
-trait UsesLayout[_ <: Layout]{
-	def layout(): Class[_]
+trait UsesLayout[V <: Layout]{
+	def layout(): Class[V]
 }

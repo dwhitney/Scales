@@ -13,8 +13,8 @@ class ScalesPluginTests extends Spec with MustMatchers with BeforeAndAfter{
 	val pluginRoot = "plugin"
 		
 	class TestProject(info: ProjectInfo) extends DefaultWebProject(info) with ScalesPlugin{
-		scalesAppDir = path(pluginRoot) / "src" / "main" / "scala" / "scales-app"
-		webAppDir = path(pluginRoot) / "src" / "main" / "webapp"
+		override def scalesAppDir = path(pluginRoot) / "src" / "main" / "scala" / "scales-app"
+		override def webAppDir = path(pluginRoot) / "src" / "main" / "webapp"
 	}
 	
 	val project = new TestProject(ProjectInfo(new File("."), Nil, None)(new ConsoleLogger()))
@@ -45,6 +45,7 @@ class ScalesPluginTests extends Spec with MustMatchers with BeforeAndAfter{
 			val pages = project.scalesAppDir / "pages"
 			val layouts = project.scalesAppDir / "layouts"
 			val components = project.scalesAppDir / "components"
+			val config = project.scalesAppDir / "conf"
 			
 			val pagesResources = project.scalesResourcesDir / "pages"
 			val layoutsResources = project.scalesResourcesDir / "layouts"
@@ -58,6 +59,7 @@ class ScalesPluginTests extends Spec with MustMatchers with BeforeAndAfter{
 			componentsResources.asFile.exists must be(true)
 			project.webAppDir.asFile.exists must be(true)
 			
+			(config / "Settings.scala").asFile.exists must be(true)
 			(project.webAppDir / "WEB-INF" / "web.xml").asFile.exists must be(true)
 			(project.webAppDir / "WEB-INF").asFile.exists must be(true)
 		}
