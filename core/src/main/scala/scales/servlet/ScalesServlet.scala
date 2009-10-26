@@ -18,7 +18,7 @@ class ScalesServlet extends HttpServlet{
 	private type URLMapping = (scala.util.matching.Regex, Class[P] forSome {type P <: Page})
 	
 	private val urlMappings: List[URLMapping] = getURLMappings
-	private val pagePackage: String = "asdf"
+	private val pagePackage: String = "pages"
 	
 		
 	//looks for a class called conf.Settings - this would come from a scales project
@@ -146,8 +146,7 @@ class ScalesServlet extends HttpServlet{
 	private def checkLayoutStep(page: Page, request: HttpServletRequest, response: HttpServletResponse): NodeSeq = {
 		page match {
 			case p: UsesLayout[Layout] => {
-				val layout = p.layout.newInstance().asInstanceOf[Layout]
-				layout.layoutPage(request, response, p)
+				p.layout.newInstance.asInstanceOf[Layout].layoutPage(request, response, p)
 			}
 			case _ => page(request, response)
 		}
