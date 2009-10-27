@@ -74,7 +74,6 @@ class ScalesServlet extends HttpServlet{
 	}
 	
 	override def service(request: HttpServletRequest, response: HttpServletResponse): Unit = {
-		
 		if(urlMappings == null || pagePackage == null){
 			println("the conf.Settings object was not found.  This should be in the scales-app/conf directory - maybe you changed the package name")
 			request.setAttribute(ScalesUrlMappingFilter.URL_NOT_FOUND, ScalesUrlMappingFilter.URL_NOT_FOUND)
@@ -88,8 +87,8 @@ class ScalesServlet extends HttpServlet{
 			try{
 				val (step1Passed: Boolean, page: Page) = urlMappings.find{tuple: URLMapping => tuple._1.pattern.matcher(incomingRequestURI).matches} match {
 					case Some((regexp, clazz)) => {
-						val page: Page = clazz.newInstance
-						page.UrlVars = regexp
+						val page: Page = clazz.newInstance()
+						//page.UrlVars = regexp
 						(checkHttpStep(page, request, response), page)
 					}
 					case None => {
@@ -107,6 +106,7 @@ class ScalesServlet extends HttpServlet{
 				}
 			
 				if(step1Passed){
+					page.action(request, response)
 					val outputSeq = checkLayoutStep(page, request, response)
 					outputSeq.foreach{ node: Node =>
 						out.println(AltParser.toXML(node, false, false, false))
@@ -119,7 +119,6 @@ class ScalesServlet extends HttpServlet{
 				case me: scala.MatchError => {request.setAttribute(ScalesUrlMappingFilter.URL_NOT_FOUND, ScalesUrlMappingFilter.URL_NOT_FOUND)}
 			}
 		}
-		
 		()
 	}
 	

@@ -67,6 +67,11 @@ trait ScalesPlugin extends DefaultWebProject with WebXML{
 						
 			createWebXMLAction.run
 			createSettings.run
+			createIndexCode.run
+			createIndexHtml.run
+			createMainCode.run
+			createMainHtml.run
+			
 			None
 		}
 	}
@@ -75,36 +80,39 @@ trait ScalesPlugin extends DefaultWebProject with WebXML{
 	creates the conf/Settings.scala file
 	**/
 	def createSettings = task {
-		val settings = """
-package conf
-
-import scales.Page
-import scales.conf.Config
-import pages.Index
-import scala.util.matching.Regex
-
-object Settings extends Config{
-	/*
-	This type is a tuple with the first element being a regular expression extractor 
-	that matches a URL and the second element being any class that extends the Page trait.
-	An instance of the class will be created and invoked when the URL of a given request  
-	matches the regular expression
-	*/
-	type URLMapping = (Regex, Class[P] forSome {type P <: Page})
-
-	/*
-	examples of URL schemes:
-	listed above: """ + "\"\"\"" + """(/""|/index.html)""" + "\"\"\"" + """.r -- will match / or /index.html
-	"/index.html".r -- will only match /index.html
-	""" + "\"\"\"" + """(/""|/index(\.?.{0,4}))""" + "\"\"\"" + """.r -- will match / or /index.html or /index or /index.htm (or any 4 letter extension)
-	""" + "\"\"\"" + """^/([^/]*?)/([^/]*?)(\..*)?$""" + "\"\"\"" + """.r  -- will match /class/id.html or /class/id.html
-	*/
-
-	def urlMappings: List[URLMapping] = (""" + "\"\"\"" + """(/""|/index.html)""" + "\"\"\"" + """.r, classOf[Index]) :: Nil
-
-}		
-"""
-		FileUtilities.append((config / "Settings.scala").asFile, settings, log)
+		FileUtilities.append((config / "Settings.scala").asFile, Settings.settings, log)
+		None
+	}
+	
+	/**
+	creates scales-app/pages/Index.scala
+	**/
+	def createIndexCode = task{
+		FileUtilities.append((pages / "Index.scala").asFile, IndexPage.page, log)
+		None
+	}
+	
+	/**
+	creates scales-app/pages/Index.html in the resources folder
+	**/
+	def createIndexHtml = task{
+		FileUtilities.append((scalesResourcesDir / "pages" / "Index.html").asFile, IndexPage.resource, log)
+		None
+	}
+	
+	/**
+	creates scales-app/layouts/Main.scala
+	**/
+	def createMainCode = task{
+		FileUtilities.append((layouts / "Main.scala").asFile, MainLayout.page, log)
+		None
+	}
+	
+	/**
+	creates scales-app/layouts/Main.html in the resources folder
+	**/
+	def createMainHtml = task{
+		FileUtilities.append((scalesResourcesDir / "layouts" / "Main.html").asFile, MainLayout.resource, log)
 		None
 	}
 	

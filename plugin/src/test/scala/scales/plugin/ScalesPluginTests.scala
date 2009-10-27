@@ -62,6 +62,10 @@ class ScalesPluginTests extends Spec with MustMatchers with BeforeAndAfter{
 			(config / "Settings.scala").asFile.exists must be(true)
 			(project.webAppDir / "WEB-INF" / "web.xml").asFile.exists must be(true)
 			(project.webAppDir / "WEB-INF").asFile.exists must be(true)
+			(layoutsResources / "Main.html").asFile.exists must be(true)
+			(layouts / "Main.scala").asFile.exists must be(true)
+			(pagesResources / "Index.html").asFile.exists must be(true)
+			(pages / "Index.scala").asFile.exists must be(true)
 		}
 		
 		it("must return an error if init is called but the project is already initialized"){

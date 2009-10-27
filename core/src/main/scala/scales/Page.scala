@@ -1,7 +1,10 @@
 package scales
 
 import scala.util.matching.Regex
+import javax.servlet.http.HttpServletResponse
 
 trait Page extends View{
-	var UrlVars: Regex = """^/([^/]*?)/([^/]*?)(\..*)?$""".r //  use as: val UrlVars(clazz, id, extension) = "/class/id.extension"
+	def redirect(response: HttpServletResponse, url: String): Unit = {
+		response.sendRedirect(url)
+	}
 }
