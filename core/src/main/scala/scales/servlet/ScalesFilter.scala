@@ -45,15 +45,13 @@ class ScalesFilter extends Filter with SettingsLoader with PageBuilder{
 		//see if we can build a page - if so write it to the response
 		mapping match {
 			case Some(m: ScalesFilter.URLMapping) => 
-				buildPage(m) match {
-					case Some(page: NodeSeq) => response.getWriter.print(page)
-					case None => ()
+				buildPage(request, response, m) match {
+					case Some(page: NodeSeq) => 
+						response.getWriter.print(page)
+					case None => filterChain.doFilter(request, response)
  				}
-			case None => () 
+			case None => filterChain.doFilter(request, response)
 		}
-		
-		//continue down the filter chain
-		filterChain.doFilter(request, response)
 		
 		()
 	}
