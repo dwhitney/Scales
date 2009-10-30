@@ -27,7 +27,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test settings loader
 			trait TestSettingsLoader extends SettingsLoader{
-				override def settings = TestSettings
+				override def urlMappings = TestSettings.urlMappings
 			}
 			
 			//setup a test PageBuilder
@@ -61,7 +61,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test settings loader
 			trait TestSettingsLoader extends SettingsLoader{
-				override def settings = TestSettings
+				override def urlMappings = TestSettings.urlMappings
 			}
 			
 			//setup a test PageBuilder
@@ -96,7 +96,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test settings loader
 			trait TestSettingsLoader extends SettingsLoader{
-				override def settings = TestSettings
+				override def urlMappings = TestSettings.urlMappings
 			}
 			
 			//setup a test PageBuilder
@@ -130,7 +130,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test settings loader
 			trait TestSettingsLoader extends SettingsLoader{
-				override def settings = TestSettings
+				override def urlMappings = TestSettings.urlMappings
 			}
 			
 			//setup a test PageBuilder

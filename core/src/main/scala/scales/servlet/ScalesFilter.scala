@@ -40,7 +40,7 @@ class ScalesFilter extends Filter with SettingsLoader with PageBuilder{
 
 		//get requestURI, strip out the contextPath, and find a mapping for it
 		val requestURI = request.getRequestURI.replaceFirst("^" + request.getContextPath, "")
-		val mapping = settings.urlMappings.find{tuple: ScalesFilter.URLMapping => tuple._1.pattern.matcher(requestURI).matches}
+		val mapping = urlMappings.find{tuple: ScalesFilter.URLMapping => tuple._1.pattern.matcher(requestURI).matches}
 		
 		//see if we can build a page - if so write it to the response
 		mapping match {
