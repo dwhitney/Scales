@@ -32,7 +32,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test PageBuilder
 			trait TestPageBuilder extends PageBuilder{
-				override def buildPage(mapping: ScalesFilter.URLMapping): Option[NodeSeq] = Some(<test></test>)
+				override def buildPage(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[NodeSeq] = Some(<test></test>)
 			}
 			
 			//mock java.io.PrintWriter
@@ -48,7 +48,6 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			verify(mockRequest).getRequestURI
 			verify(mockPrintWriter).print(<test></test>)
-			verify(mockFilterChain).doFilter(mockRequest, mockResponse)
 		}
 		
 		it("must find the /test.html mapping when requested, and write the Page while extracting the contextPath"){
@@ -66,7 +65,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test PageBuilder
 			trait TestPageBuilder extends PageBuilder{
-				override def buildPage(mapping: ScalesFilter.URLMapping): Option[NodeSeq] = Some(<test></test>)
+				override def buildPage(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[NodeSeq] = Some(<test></test>)
 			}
 			
 			//mock java.io.PrintWriter
@@ -83,7 +82,6 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			verify(mockRequest).getRequestURI
 			verify(mockRequest).getContextPath
 			verify(mockPrintWriter).print(<test></test>)
-			verify(mockFilterChain).doFilter(mockRequest, mockResponse)
 		}
 		
 		it("must not write anything to the response when no page is found"){
@@ -101,7 +99,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test PageBuilder
 			trait TestPageBuilder extends PageBuilder{
-				override def buildPage(mapping: ScalesFilter.URLMapping): Option[NodeSeq] = None
+				override def buildPage(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[NodeSeq] = None
 			}
 			
 			//mock java.io.PrintWriter
@@ -135,7 +133,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test PageBuilder
 			trait TestPageBuilder extends PageBuilder{
-				override def buildPage(mapping: ScalesFilter.URLMapping): Option[NodeSeq] = None
+				override def buildPage(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[NodeSeq] = None
 			}
 			
 			//mock java.io.PrintWriter

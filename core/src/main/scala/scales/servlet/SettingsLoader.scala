@@ -5,11 +5,20 @@ import ScalesFilter._
 import java.lang.reflect._
 
 /**
-Loads settings from scales-app/conf/Settings.scala and returns a Config object from settings
+Loads some settings from scales-app/conf/Settings.scala
 **/
 trait SettingsLoader{
 	
+	/**
+	returns the URL Mappings found in the conf.Settings object supplied by the user
+	the mappings are used to decide if the filter should build any pages.
+	**/
 	def urlMappings: List[URLMapping] = getURLMappings
+	
+	/**
+	returns the pagePackage found in the conf.Settings object supplied by the user
+	this is required to build the generated pages
+	**/
 	def pagePackage: String = getPagePackage
 	
 		
@@ -33,7 +42,6 @@ trait SettingsLoader{
 	//calls a static method on the conf.Settings object and returns the result
 	private def callMethod[T](methodName: String): Option[T] = {
 		loadSettings match {
-			case null => None
 			case c: Class[Any] => {
 				try{
 					c.getMethods.find{ _.getName == methodName} match {
