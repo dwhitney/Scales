@@ -13,13 +13,15 @@ trait SettingsLoader{
 	returns the URL Mappings found in the conf.Settings object supplied by the user
 	the mappings are used to decide if the filter should build any pages.
 	**/
-	def urlMappings: List[URLMapping] = getURLMappings
+	def urlMappings: List[URLMapping] = mappingsVal
+	private lazy val mappingsVal = getURLMappings
 	
 	/**
 	returns the pagePackage found in the conf.Settings object supplied by the user
 	this is required to build the generated pages
 	**/
-	def pagePackage: String = getPagePackage
+	def pagePackage: String = pagePackageVal
+	private lazy val pagePackageVal = getPagePackage
 	
 		
 	//looks for a class called conf.Settings - this would come from a scales project
