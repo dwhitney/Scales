@@ -6,7 +6,7 @@ import scales.conf.Config
 import scales.conf.Config
 import java.net.{URLClassLoader, URL}
 import java.lang.reflect.Method
-import scales.xml.AltParser
+import scales.xml._
 
 
 object ScalesServlet{
@@ -109,7 +109,7 @@ class ScalesServlet extends HttpServlet{
 					page.action(request, response)
 					val outputSeq = checkLayoutStep(page, request, response)
 					outputSeq.foreach{ node: Node =>
-						out.println(AltParser.toXML(node, false, false, false))
+						out.println(ScalesParser.toXML(node, false, false, false))
 					}
 				}else{
 					response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
