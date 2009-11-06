@@ -71,7 +71,6 @@ object ScalesParser {
 				sb.append("/>")
 
 			case e: Elem =>
-				println(e.prefix + " --- " + e.label)
 				// print tag with namespace declarations
 				sb.append('<')
 				e.nameToString(sb)

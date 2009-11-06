@@ -17,27 +17,16 @@ trait WebXML{
 			-->
 				
 			<filter>
-				<filter-name>urlMapping</filter-name>
-				<filter-class>scales.servlet.ScalesUrlMappingFilter</filter-class>
+				<filter-name>scales</filter-name>
+				<filter-class>scales.servlet.ScalesFilter</filter-class>
 			</filter>
 
 			<filter-mapping>
-				<filter-name>urlMapping</filter-name>
+				<filter-name>scales</filter-name>
 				<url-pattern>/*</url-pattern>
 				<dispatcher>FORWARD</dispatcher>
 				<dispatcher>REQUEST</dispatcher>
 			</filter-mapping>
-
-			<servlet>
-				<servlet-name>scales</servlet-name>
-				<servlet-class>scales.servlet.ScalesServlet</servlet-class>
-				<load-on-startup>1</load-on-startup>
-			</servlet>
-
-			<servlet-mapping>
-		        <servlet-name>scales</servlet-name>
-		        <url-pattern>*.dispatch</url-pattern>
-		    </servlet-mapping>
 
 		</web-app>
 	}

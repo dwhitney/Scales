@@ -7,5 +7,5 @@ class ScalesCoreProject(info: ProjectInfo) extends DefaultProject(info){
 	val servlet = "javax.servlet" % "servlet-api" % "2.5" % "provided"
 
 	val repo1 = "maven-repo" at "http://repo2.maven.org/maven2/"
-
+	
 }

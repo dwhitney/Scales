@@ -22,7 +22,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 
 			//setup a test Config
 			object TestSettings extends Config{
-				override def urlMappings = ("/test.html".r, classOf[Page]) :: Nil
+				override def urlMappings = ("/test.html".r, classOf[View]) :: Nil
 			}
 			
 			//setup a test settings loader
@@ -30,9 +30,9 @@ class ScalesFilterTests extends Spec with MustMatchers{
 				override def urlMappings = TestSettings.urlMappings
 			}
 			
-			//setup a test PageBuilder
-			trait TestPageBuilder extends PageBuilder{
-				override def buildPage(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[NodeSeq] = Some(<test></test>)
+			//setup a test ViewBuilder
+			trait TestViewBuilder extends ViewBuilder{
+				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[String] = Some(<test></test>.toString)
 			}
 			
 			//mock java.io.PrintWriter
@@ -43,11 +43,11 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			when(mockRequest.getContextPath).thenReturn("", null)
 			when(mockResponse.getWriter).thenReturn(mockPrintWriter)
 			
-			val filter = new ScalesFilter with TestSettingsLoader with TestPageBuilder
+			val filter = new ScalesFilter with TestSettingsLoader with TestViewBuilder
 			filter.doFilter(mockRequest, mockResponse, mockFilterChain)
 			
 			verify(mockRequest).getRequestURI
-			verify(mockPrintWriter).print(<test></test>)
+			verify(mockPrintWriter).print(<test></test>.toString)
 		}
 		
 		it("must find the /test.html mapping when requested, and write the Page while extracting the contextPath"){
@@ -55,7 +55,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 
 			//setup a test Config
 			object TestSettings extends Config{
-				override def urlMappings = ("/test.html".r, classOf[Page]) :: Nil
+				override def urlMappings = ("/test.html".r, classOf[View]) :: Nil
 			}
 			
 			//setup a test settings loader
@@ -63,9 +63,9 @@ class ScalesFilterTests extends Spec with MustMatchers{
 				override def urlMappings = TestSettings.urlMappings
 			}
 			
-			//setup a test PageBuilder
-			trait TestPageBuilder extends PageBuilder{
-				override def buildPage(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[NodeSeq] = Some(<test></test>)
+			//setup a test ViewBuilder
+			trait TestViewBuilder extends ViewBuilder{
+				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[String] = Some(<test></test>.toString)
 			}
 			
 			//mock java.io.PrintWriter
@@ -76,12 +76,12 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			when(mockRequest.getContextPath).thenReturn("/contextPath")
 			when(mockResponse.getWriter).thenReturn(mockPrintWriter)
 			
-			val filter = new ScalesFilter with TestSettingsLoader with TestPageBuilder
+			val filter = new ScalesFilter with TestSettingsLoader with TestViewBuilder
 			filter.doFilter(mockRequest, mockResponse, mockFilterChain)
 			
 			verify(mockRequest).getRequestURI
 			verify(mockRequest).getContextPath
-			verify(mockPrintWriter).print(<test></test>)
+			verify(mockPrintWriter).print(<test></test>.toString)
 		}
 		
 		it("must not write anything to the response when no page is found"){
@@ -97,9 +97,9 @@ class ScalesFilterTests extends Spec with MustMatchers{
 				override def urlMappings = TestSettings.urlMappings
 			}
 			
-			//setup a test PageBuilder
-			trait TestPageBuilder extends PageBuilder{
-				override def buildPage(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[NodeSeq] = None
+			//setup a test ViewBuilder
+			trait TestViewBuilder extends ViewBuilder{
+				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[String] = None
 			}
 			
 			//mock java.io.PrintWriter
@@ -110,11 +110,11 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			when(mockRequest.getContextPath).thenReturn("", null)
 			when(mockResponse.getWriter).thenReturn(mockPrintWriter)
 			
-			val filter = new ScalesFilter with TestSettingsLoader with TestPageBuilder
+			val filter = new ScalesFilter with TestSettingsLoader with TestViewBuilder
 			filter.doFilter(mockRequest, mockResponse, mockFilterChain)
 			
 			verify(mockRequest).getRequestURI
-			verify(mockPrintWriter, never).print(<test></test>)
+			verify(mockPrintWriter, never).print(<test></test>.toString)
 			verify(mockFilterChain).doFilter(mockRequest, mockResponse)
 		}
 		
@@ -123,7 +123,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 
 			//setup a test Config
 			object TestSettings extends Config{
-				override def urlMappings = ("/test.html".r, classOf[Page]) :: Nil
+				override def urlMappings = ("/test.html".r, classOf[View]) :: Nil
 			}
 			
 			//setup a test settings loader
@@ -131,9 +131,9 @@ class ScalesFilterTests extends Spec with MustMatchers{
 				override def urlMappings = TestSettings.urlMappings
 			}
 			
-			//setup a test PageBuilder
-			trait TestPageBuilder extends PageBuilder{
-				override def buildPage(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[NodeSeq] = None
+			//setup a test ViewBuilder
+			trait TestViewBuilder extends ViewBuilder{
+				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[String] = None
 			}
 			
 			//mock java.io.PrintWriter
@@ -144,11 +144,11 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			when(mockRequest.getContextPath).thenReturn("", null)
 			when(mockResponse.getWriter).thenReturn(mockPrintWriter)
 			
-			val filter = new ScalesFilter with TestSettingsLoader with TestPageBuilder
+			val filter = new ScalesFilter with TestSettingsLoader with TestViewBuilder
 			filter.doFilter(mockRequest, mockResponse, mockFilterChain)
 			
 			verify(mockRequest).getRequestURI
-			verify(mockPrintWriter, never).print(<test></test>)
+			verify(mockPrintWriter, never).print(<test></test>.toString)
 			verify(mockFilterChain).doFilter(mockRequest, mockResponse)
 		}
 	}

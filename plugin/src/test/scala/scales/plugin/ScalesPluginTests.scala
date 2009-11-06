@@ -42,30 +42,16 @@ class ScalesPluginTests extends Spec with MustMatchers with BeforeAndAfter{
 			val task = project.scales(Array[String]("init"))
 			task.run must equal(None)
 			
-			val pages = project.scalesAppDir / "pages"
-			val layouts = project.scalesAppDir / "layouts"
-			val components = project.scalesAppDir / "components"
+			val views = project.scalesAppDir / "views"
 			val config = project.scalesAppDir / "conf"
 			
-			val pagesResources = project.scalesResourcesDir / "pages"
-			val layoutsResources = project.scalesResourcesDir / "layouts"
-			val componentsResources = project.scalesResourcesDir / "components"
-			
-			pages.asFile.exists must be(true)
-			layouts.asFile.exists must be(true)
-			components.asFile.exists must be(true)
-			pagesResources.asFile.exists must be(true)
-			layoutsResources.asFile.exists must be(true)
-			componentsResources.asFile.exists must be(true)
+			views.asFile.exists must be(true)
 			project.webAppDir.asFile.exists must be(true)
 			
 			(config / "Settings.scala").asFile.exists must be(true)
 			(project.webAppDir / "WEB-INF" / "web.xml").asFile.exists must be(true)
 			(project.webAppDir / "WEB-INF").asFile.exists must be(true)
-			(layoutsResources / "Main.html").asFile.exists must be(true)
-			(layouts / "Main.scala").asFile.exists must be(true)
-			(pagesResources / "Index.html").asFile.exists must be(true)
-			(pages / "Index.scala").asFile.exists must be(true)
+			(views / "Index.scala").asFile.exists must be(true)
 		}
 		
 		it("must return an error if init is called but the project is already initialized"){

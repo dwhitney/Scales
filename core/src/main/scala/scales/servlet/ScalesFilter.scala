@@ -4,7 +4,6 @@ import javax.servlet.{Filter, FilterConfig, FilterChain, ServletRequest, Servlet
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import scales.conf.Config
-import scales.Page
 
 import scala.xml.NodeSeq
 
@@ -15,7 +14,7 @@ object ScalesFilter{
 	/**
 	convenience type, so I don't have to type that out a lot
 	**/
-	type URLMapping = (scala.util.matching.Regex, Class[P] forSome {type P <: Page})
+	type URLMapping = (scala.util.matching.Regex, Class[V] forSome {type V <: View})
 }
 
 /**
@@ -24,7 +23,7 @@ If a matching URL mapping is found, it's processed by the Scales framework.  If 
 passed along the filter chain for further processing by the servlet container, and/or other
 filters.
 **/
-class ScalesFilter extends Filter with SettingsLoader with PageBuilder{
+class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 	
 	//the filterConfig - set by the init method
 	private var filterConfig: FilterConfig = null
@@ -45,8 +44,8 @@ class ScalesFilter extends Filter with SettingsLoader with PageBuilder{
 		//see if we can build a page - if so write it to the response
 		mapping match {
 			case Some(m: ScalesFilter.URLMapping) => 
-				buildPage(request, response, m) match {
-					case Some(page: NodeSeq) => response.getWriter.print(page)
+				buildView(request, response, m) match {
+					case Some(page: String) => response.getWriter.print(page)
 					case None => filterChain.doFilter(request, response)
  				}
 			case None => filterChain.doFilter(request, response)
