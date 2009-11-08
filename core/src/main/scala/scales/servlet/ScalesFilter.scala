@@ -65,7 +65,8 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 		this.filterConfig = filterConfig
 	}
 	
-	//loads the compiled classes into the class loader
+	//loads the compiled classes into the class loader - I believe this is neccesary because this filter comes from a jar file
+	//and the compiled classes come from the user's project
 	private def loadCompiledFilesIntoClassLoader(){
 		val sysloader = this.getClass.getClassLoader().asInstanceOf[URLClassLoader];
 		val sysclass = classOf[URLClassLoader]
