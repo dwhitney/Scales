@@ -2,6 +2,8 @@ package scales.servlet
 
 import javax.servlet.{Filter, FilterConfig, FilterChain, ServletRequest, ServletResponse}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import java.net.{URL,URLClassLoader}
+import java.io.File
 
 import scales.conf.Config
 
@@ -56,9 +58,22 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 	
 	
 	/**
-	required by the Filter trait - for now it only sets the filter config
+	loads all of the pages that have mappings from the mappings.properties file
 	**/
-	def init(filterConfig: FilterConfig): Unit = this.filterConfig = filterConfig
+	def init(filterConfig: FilterConfig): Unit = {
+		loadCompiledFilesIntoClassLoader
+		this.filterConfig = filterConfig
+	}
+	
+	//loads the compiled classes into the class loader
+	private def loadCompiledFilesIntoClassLoader(){
+		val sysloader = this.getClass.getClassLoader().asInstanceOf[URLClassLoader];
+		val sysclass = classOf[URLClassLoader]
+		val parameters = scala.Array[Class[URL]](classOf[URL])
+		val method = sysclass.getDeclaredMethod("addURL", classOf[URL]);
+		method.setAccessible(true);
+		method.invoke(sysloader, new File("sensically/target/classes").toURL)
+	}
 	
 	/**
 	required by the Filter trait - for now it does nothing
