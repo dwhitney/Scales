@@ -1,10 +1,20 @@
 package scales
 
 import scala.util.matching.Regex
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-trait Mapping{ self: View =>
-	def mapping: String
-	def r: Regex = mapping.r
+/**
+This is a standard mapping of a regex to a class extending View.
+**/
+case class Mapping[V <: View](val mapping: String, val view: Class[V]){
+	//this is here to prevent having to generate the Regex every time the r method is called
+	private lazy val reg = mapping.r
+	
+	/**
+	returns the Regex generated from the mapping string passed in the constructor
+	**/
+	def r: Regex = reg
+
 }
 
 
@@ -15,12 +25,16 @@ This is a mapping that mirrors the @RequestMapping in Spring 3.0, so you use it 
 In the first example a URL like /hotels/5 would map "5" to the hotelId variable
 
 **/
-trait TemplateMapping extends Mapping{ self: View =>
+case class TemplateMapping[V <: View](override val mapping: String, override val view: Class[V]) extends Mapping(mapping, view){
+	
+	//this lazy val is here to prevent generating the Regex every time r is called
+	private lazy val reg = buildR
+	override def r = reg
 	
 	/**
 	returns a Regex usable for extracting var names from the URL
 	**/
-	override def r: Regex = {
+	private def buildR: Regex = {
 		val url = mapping
 		
 		//replaces {varName} with ([^/]*?) so we can capture the variables with a regular expression
@@ -33,11 +47,15 @@ trait TemplateMapping extends Mapping{ self: View =>
 		else regex.r
 	}
 	
+	//this lazy val is here to prevent having to generate the variable names every time the variableNames method is called
+	private lazy val varNames = buildVarNames
+	def variableNames = varNames
+	
 	/**
 	returns a Seq[String] of all the variable names declared in the url constructor arg, for example:
 	/hotels/{hotelId}/booking/{bookingId} will result in: Seq("hotelId", "bookingId")
 	**/
-	def variableNames: Seq[String] = {
+	private def buildVarNames: Seq[String] = {
 		"""\{(.*?)\}""".r.findAllIn(mapping).collect.map(_.toString.replaceAll("[{}]", "")) 
 	}
 }
@@ -45,11 +63,11 @@ trait TemplateMapping extends Mapping{ self: View =>
 /**
 A trait that allows one to define an action that occurs before the view is created/rendered
 **/
-trait MappingFilter{ self: Mapping =>
+trait MappingFilter{ self: Mapping[_] =>
 	/**
 	The action that occurs before the view is created/rendered.  If you return true then the view will be created/rendered
 	If false is returned, the view will not be created/rendered
 	**/
-	def beforeView: Boolean
+	def beforeView(request: HttpServletRequest, response: HttpServletResponse): Boolean
 
 }

@@ -10,7 +10,6 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import javax.servlet.{FilterChain, FilterConfig, ServletContext, RequestDispatcher}
 
 import scales.conf.Config
-import ScalesFilter._
 import scala.xml.NodeSeq
 import scales._
 
@@ -70,7 +69,7 @@ class TestGETAndPOSTView(request: HttpServletRequest, response: HttpServletRespo
 }
 
 class ViewBuilderTests extends Spec with MustMatchers{
-
+	
 	describe("A ViewBuilder"){
 		
 		it("must build a view"){
@@ -79,8 +78,20 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			when(mockRequest.getMethod).thenReturn("POST")
 			
 			object TestThing extends ViewBuilder{}
+			val mapping = new Mapping("/blah", classOf[TestView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestView])) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
+		}
+		
+		it("must build a view with a TemplateMapping"){
+			val mockRequest = mock(classOf[HttpServletRequest])
+			val mockResponse = mock(classOf[HttpServletResponse])
+			when(mockRequest.getMethod).thenReturn("POST")
+			
+			object TestThing extends ViewBuilder{}
+			val mapping = new TemplateMapping("/blah", classOf[TestView])
+			
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 		it("must filter out a GET only view when the method isn't GET"){
@@ -88,8 +99,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("POST")
+			val mapping = new Mapping("/test", classOf[TestGETView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestGETView])) must equal(None)
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(None)
 			verify(mockResponse).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
 		}
 		
@@ -98,8 +110,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("GET")
+			val mapping = new Mapping("/test", classOf[TestGETView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestGETView])) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 		it("must filter out a POST only view when the method isn't POST"){
@@ -107,8 +120,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("GET")
+			val mapping = new Mapping("/test", classOf[TestPOSTView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestPOSTView])) must equal(None)
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(None)
 			verify(mockResponse).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
 		}
 		
@@ -117,8 +131,8 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("POST")
-			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestPOSTView])) must equal(Some("Test!"))
+			val mapping = new Mapping("/test", classOf[TestPOSTView])
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 		it("must filter out a PUT only view when the method isn't PUT"){
@@ -126,8 +140,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("GET")
+			val mapping = new Mapping("/test", classOf[TestPUTView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestPUTView])) must equal(None)
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(None)
 			verify(mockResponse).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
 		}
 		
@@ -136,8 +151,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("PUT")
+			val mapping = new Mapping("/test", classOf[TestPUTView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestPUTView])) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 		it("must filter out a DELETE only view when the method isn't DELETE"){
@@ -145,8 +161,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("GET")
+			val mapping = new Mapping("/test", classOf[TestDELETEView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestDELETEView])) must equal(None)
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(None)
 			verify(mockResponse).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
 		}
 		
@@ -155,8 +172,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("DELETE")
+			val mapping = new Mapping("/test", classOf[TestDELETEView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestDELETEView])) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 		it("must filter out a HEAD only view when the method isn't HEAD"){
@@ -164,8 +182,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("GET")
+			val mapping = new Mapping("/test", classOf[TestHEADView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestHEADView])) must equal(None)
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(None)
 			verify(mockResponse).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
 		}
 		
@@ -174,8 +193,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("HEAD")
+			val mapping = new Mapping("/test", classOf[TestHEADView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestHEADView])) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 		it("must filter out a OPTIONS only view when the method isn't OPTIONS"){
@@ -183,8 +203,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("GET")
+			val mapping = new Mapping("/test", classOf[TestOPTIONSView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestOPTIONSView])) must equal(None)
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(None)
 			verify(mockResponse).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
 		}
 		
@@ -193,8 +214,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("OPTIONS")
+			val mapping = new Mapping("/test", classOf[TestOPTIONSView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestOPTIONSView])) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 		it("must filter out a TRACE only view when the method isn't TRACE"){
@@ -202,8 +224,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("GET")
+			val mapping = new Mapping("/test", classOf[TestTRACEView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestTRACEView])) must equal(None)
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(None)
 			verify(mockResponse).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
 		}
 		
@@ -212,8 +235,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("TRACE")
+			val mapping = new Mapping("/test", classOf[TestTRACEView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestTRACEView])) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 		it("must filter out a CONNECT only view when the method isn't CONNECT"){
@@ -221,8 +245,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("GET")
+			val mapping = new Mapping("/test", classOf[TestCONNECTView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestCONNECTView])) must equal(None)
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(None)
 			verify(mockResponse).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
 		}
 		
@@ -231,8 +256,9 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("CONNECT")
+			val mapping = new Mapping("/test", classOf[TestCONNECTView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestCONNECTView])) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 		it("must responsd to multiple methods if they are used"){
@@ -240,9 +266,10 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			val mockResponse = mock(classOf[HttpServletResponse])
 			
 			when(mockRequest.getMethod).thenReturn("GET", "POST")
+			val mapping = new Mapping("/test", classOf[TestGETAndPOSTView])
 			
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestGETAndPOSTView])) must equal(Some("Test!"))
-			TestThing.buildView(mockRequest, mockResponse, (null, classOf[TestGETAndPOSTView])) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
+			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
 	}

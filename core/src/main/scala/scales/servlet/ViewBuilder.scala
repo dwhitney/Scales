@@ -1,6 +1,5 @@
 package scales.servlet
 
-import ScalesFilter._
 import scala.xml.NodeSeq
 import scales._
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
@@ -15,10 +14,10 @@ trait ViewBuilder{
 	performs the logic of building a Page, including processing the layout.
 	If the page cannot be built, None is returned, otherwise Some(page.apply()) is returned
 	**/
-	def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: URLMapping): Option[String] = {
+	def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: Mapping[_ <: View]): Option[String] = {
 		//build the given view with reflection
 		try{
-			val constructor = mapping._2.getConstructor(classOf[HttpServletRequest], classOf[HttpServletResponse])
+			val constructor = mapping.view.getConstructor(classOf[HttpServletRequest], classOf[HttpServletResponse])
 			val view = constructor.newInstance(request, response)
 			restFilter(request, view) match {
 				case Some(view: View) => Some(view())

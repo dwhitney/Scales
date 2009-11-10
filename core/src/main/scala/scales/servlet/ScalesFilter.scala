@@ -10,16 +10,6 @@ import scales.conf.Config
 import scala.xml.NodeSeq
 
 /**
-Defines some constants
-**/
-object ScalesFilter{
-	/**
-	convenience type, so I don't have to type that out a lot
-	**/
-	type URLMapping = (scala.util.matching.Regex, Class[V] forSome {type V <: View})
-}
-
-/**
 This class filters URLs based upon the mappings defined in scales-app/conf/Settings.scala.
 If a matching URL mapping is found, it's processed by the Scales framework.  If not, it's 
 passed along the filter chain for further processing by the servlet container, and/or other
@@ -41,11 +31,11 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 
 		//get requestURI, strip out the contextPath, and find a mapping for it
 		val requestURI = request.getRequestURI.replaceFirst("^" + request.getContextPath, "")
-		val mapping = urlMappings.find{tuple: ScalesFilter.URLMapping => tuple._1.pattern.matcher(requestURI).matches}
+		val mapping = urlMappings.find{mapping: Mapping[_ <: View] => mapping.r.pattern.matcher(requestURI).matches}
 		
 		//see if we can build a page - if so write it to the response
 		mapping match {
-			case Some(m: ScalesFilter.URLMapping) => 
+			case Some(m: Mapping[_]) => 
 				buildView(request, response, m) match {
 					case Some(page: String) => response.getWriter.print(page)
 					case None => filterChain.doFilter(request, response)

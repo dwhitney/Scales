@@ -14,7 +14,7 @@ trait Config{
 	/**
 	Returns a List that contains tuples of Regexs and Views associated with them
 	**/
-	def urlMappings: List[(Regex, Class[V] forSome {type V <: View})]
+	def urlMappings: List[_ <: Mapping[_ <: View]]
 	// = ("""^/([^/]*?)/([^/]*?)(\..*)?$""".r, classOf[View]) :: Nil
 	
 	/**

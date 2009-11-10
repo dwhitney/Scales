@@ -1,7 +1,6 @@
 package scales.servlet
 
 import scales.conf.Config
-import ScalesFilter._
 import java.lang.reflect._
 
 /**
@@ -13,7 +12,7 @@ trait SettingsLoader{
 	returns the URL Mappings found in the conf.Settings object supplied by the user
 	the mappings are used to decide if the filter should build any pages.
 	**/
-	def urlMappings: List[URLMapping] = mappingsVal
+	def urlMappings: List[Mapping[_ <: View]] = mappingsVal
 	private lazy val mappingsVal = getURLMappings
 	
 	/**
@@ -26,9 +25,9 @@ trait SettingsLoader{
 		
 	//looks for a class called conf.Settings - this would come from a scales project
 	//if it's found, the URL Mappings are pulled from it, and returned
-	private def getURLMappings: List[URLMapping] = {
-		callMethod[List[URLMapping]]("urlMappings") match {
-			case Some(l: List[URLMapping]) => l
+	private def getURLMappings: List[Mapping[_ <: View]] = {
+		callMethod[List[Mapping[_ <: View]]]("urlMappings") match {
+			case Some(l: List[Mapping[_]]) => l
 			case None => null
 		}
 	}

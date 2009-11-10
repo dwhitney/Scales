@@ -10,7 +10,6 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import javax.servlet.{FilterChain, FilterConfig, ServletContext, RequestDispatcher}
 
 import scales.conf.Config
-import ScalesFilter._
 import scala.xml.NodeSeq
 
 class ScalesFilterTests extends Spec with MustMatchers{
@@ -22,7 +21,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 
 			//setup a test Config
 			object TestSettings extends Config{
-				override def urlMappings = ("/test.html".r, classOf[View]) :: Nil
+				override def urlMappings = new Mapping("/test.html", classOf[View]) :: Nil
 			}
 			
 			//setup a test settings loader
@@ -32,7 +31,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test ViewBuilder
 			trait TestViewBuilder extends ViewBuilder{
-				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[String] = Some(<test></test>.toString)
+				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: Mapping[_ <: View]): Option[String] = Some(<test></test>.toString)
 			}
 			
 			//mock java.io.PrintWriter
@@ -55,7 +54,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 
 			//setup a test Config
 			object TestSettings extends Config{
-				override def urlMappings = ("/test.html".r, classOf[View]) :: Nil
+				override def urlMappings = new Mapping("/test.html", classOf[View]) :: Nil
 			}
 			
 			//setup a test settings loader
@@ -65,7 +64,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test ViewBuilder
 			trait TestViewBuilder extends ViewBuilder{
-				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[String] = Some(<test></test>.toString)
+				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: Mapping[_ <: View]): Option[String] = Some(<test></test>.toString)
 			}
 			
 			//mock java.io.PrintWriter
@@ -99,7 +98,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test ViewBuilder
 			trait TestViewBuilder extends ViewBuilder{
-				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[String] = None
+				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: Mapping[_ <: View]): Option[String] = None
 			}
 			
 			//mock java.io.PrintWriter
@@ -123,7 +122,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 
 			//setup a test Config
 			object TestSettings extends Config{
-				override def urlMappings = ("/test.html".r, classOf[View]) :: Nil
+				override def urlMappings = new Mapping("/test.html", classOf[View]) :: Nil
 			}
 			
 			//setup a test settings loader
@@ -133,7 +132,7 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			
 			//setup a test ViewBuilder
 			trait TestViewBuilder extends ViewBuilder{
-				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: ScalesFilter.URLMapping): Option[String] = None
+				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: Mapping[_ <: View]): Option[String] = None
 			}
 			
 			//mock java.io.PrintWriter
