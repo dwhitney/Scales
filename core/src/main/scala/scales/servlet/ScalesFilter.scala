@@ -37,7 +37,7 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 		mapping match {
 			case Some(m: Mapping[_]) => 
 				buildView(request, response, m) match {
-					case Some(page: String) => response.getWriter.print(page)
+					case Some(page: String) => response.getWriter.write(page)
 					case None => filterChain.doFilter(request, response)
  				}
 			case None => filterChain.doFilter(request, response)
@@ -71,5 +71,18 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 	**/
 	def destroy(): Unit = {}
 	
+}
+
+import java.io.{CharArrayWriter, PrintWriter}
+import javax.servlet.http.HttpServletResponseWrapper
+/**
+NOT CURRENTY USED, BUT WILL BE USEFUL LATER
+Stands in as a Wrapper around the standard HttpServletResponse so that we can write to the response without flushing to the client
+until all of the filters have written.  Otherwise we get an exception saying java.lang.IllegalStateException: Committed
+**/
+class CharResponseWrapper(response: HttpServletResponse) extends HttpServletResponseWrapper(response){
+	private val output = new CharArrayWriter
+	override def getWriter: PrintWriter = new PrintWriter(output)
+	override def toString = output.toString
 }
 
