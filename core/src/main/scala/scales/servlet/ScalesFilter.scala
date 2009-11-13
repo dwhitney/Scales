@@ -37,7 +37,7 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 		mapping match {
 			case Some(m: Mapping[_]) => 
 				buildView(request, response, m) match {
-					case Some(page: String) => response.getWriter.write(page)
+					case Some(page: String) => response.getWriter.print(page)
 					case None => filterChain.doFilter(request, response)
  				}
 			case None => filterChain.doFilter(request, response)
@@ -55,7 +55,7 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 		this.filterConfig = filterConfig
 	}
 	
-	//loads the compiled classes into the class loader - I believe this is neccesary because this filter comes from a jar file
+	//loads the compiled classes into the class loader - I believe this is neccesary because this filter comes from a jar
 	//and the compiled classes come from the user's project
 	private def loadCompiledFilesIntoClassLoader(){
 		val sysloader = this.getClass.getClassLoader().asInstanceOf[URLClassLoader];

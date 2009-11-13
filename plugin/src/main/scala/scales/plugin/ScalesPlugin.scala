@@ -4,6 +4,7 @@ import sbt._
 
 import java.io.{File, FileOutputStream, InputStreamReader, FileInputStream}
 import scala.io.Source
+import scales.servlet.WebXML
 
 trait ScalesPlugin extends DefaultWebProject with WebXML{
 	def scalesAppDir = path("src") / "main" / "scala" / "scales-app"
@@ -11,8 +12,7 @@ trait ScalesPlugin extends DefaultWebProject with WebXML{
 	def webAppDir = path("src") / "main" / "webapp"
 	def views = scalesAppDir / "views"
 	def config = scalesAppDir / "conf"
-	
-	
+		
 	/**
 	Initializes a Scales project directory structure
 	**/
@@ -69,6 +69,8 @@ trait ScalesPlugin extends DefaultWebProject with WebXML{
 	def createWebXMLAction = task {
 		webAppDir.asFile.mkdirs
 		(webAppDir / "WEB-INF").asFile.mkdirs
+		val file = (webAppDir / "WEB-INF" / "web.xml").asFile
+		file.delete
 		FileUtilities.append((webAppDir / "WEB-INF" / "web.xml").asFile, webxml.toString, log)
 		None
 	}
