@@ -52,7 +52,7 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 	loads all of the pages that have mappings from the mappings.properties file
 	**/
 	def init(filterConfig: FilterConfig): Unit = {
-		loadCompiledFilesIntoClassLoader
+	//	loadCompiledFilesIntoClassLoader
 		this.filterConfig = filterConfig
 	}
 	
@@ -64,8 +64,7 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 		val parameters = scala.Array[Class[URL]](classOf[URL])
 		val method = sysclass.getDeclaredMethod("addURL", classOf[URL]);
 		method.setAccessible(true);
-		println(new File(".").getAbsolutePath)
-		method.invoke(sysloader, new File("target/classes").toURL)
+		method.invoke(sysloader, new File("saysus/target/classes").toURL)
 	}
 	
 	/**
