@@ -83,6 +83,18 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
 		
+		it("must set the mapping in the request"){
+			val mockRequest = mock(classOf[HttpServletRequest])
+			val mockResponse = mock(classOf[HttpServletResponse])
+			when(mockRequest.getMethod).thenReturn("POST")
+			
+			object TestThing extends ViewBuilder{}
+			val mapping = new Mapping("/blah", classOf[TestView])
+			
+			TestThing.buildView(mockRequest, mockResponse, mapping)
+			verify(mockRequest).setAttribute("mapping", mapping)
+		}
+		
 		it("must build a view with a TemplateMapping"){
 			val mockRequest = mock(classOf[HttpServletRequest])
 			val mockResponse = mock(classOf[HttpServletResponse])
@@ -271,7 +283,7 @@ class ViewBuilderTests extends Spec with MustMatchers{
 			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 			TestThing.buildView(mockRequest, mockResponse, mapping) must equal(Some("Test!"))
 		}
-		
+
 	}
 	
 }

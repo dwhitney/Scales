@@ -18,6 +18,7 @@ trait ViewBuilder{
 		//build the given view with reflection
 		try{
 			val constructor = mapping.view.getConstructor(classOf[HttpServletRequest], classOf[HttpServletResponse])
+			request.setAttribute("mapping", mapping)
 			val view = constructor.newInstance(request, response)
 			restFilter(request, view) match {
 				case Some(view: View) => Some(view())

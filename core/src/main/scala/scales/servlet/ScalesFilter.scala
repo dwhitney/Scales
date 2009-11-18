@@ -63,7 +63,8 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 		val parameters = scala.Array[Class[URL]](classOf[URL])
 		val method = sysclass.getDeclaredMethod("addURL", classOf[URL]);
 		method.setAccessible(true);
-		method.invoke(sysloader, new File("sensically/target/classes").toURL)
+		println(new File(".").getAbsolutePath)
+		method.invoke(sysloader, new File("target/classes").toURL)
 	}
 	
 	/**
