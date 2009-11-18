@@ -4,6 +4,10 @@ import scala.xml.NodeSeq
 import scales._
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
+object ViewBuilder{
+	val VIEW_MAPPING = "SCALES_VIEW_MAPPING"
+}
+
 /**
 trait that builds pages.  If the Page is contained by the framework, Some(NodeSeq) of that page will be returned,
 otherwise None is returned.  The NodeSeq is the rendered product of the page 
