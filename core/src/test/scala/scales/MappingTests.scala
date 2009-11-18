@@ -26,6 +26,14 @@ class MappingTests extends Spec with MustMatchers{
 		}		
 	}
 	
+	describe ("A ExcludeMapping"){
+		
+		it("must be created"){
+			val mapping = new ExcludeMapping("/chat")
+			mapping must not be(null)
+		}
+	}
+	
 	describe("A TemplateMapping"){
 		
 		it("must turn a template like /hotels/{hotelId} into a usable regex"){

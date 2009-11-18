@@ -35,6 +35,7 @@ class ScalesFilter extends Filter with SettingsLoader with ViewBuilder{
 		
 		//see if we can build a page - if so write it to the response
 		mapping match {
+			case Some(exclude: ExcludeMapping) => filterChain.doFilter(request, response)
 			case Some(m: Mapping[_]) => 
 				buildView(request, response, m) match {
 					case Some(page: String) => response.getWriter.print(page)

@@ -17,6 +17,13 @@ case class Mapping[V <: View](val mapping: String, val view: Class[V]){
 
 }
 
+/**
+This class extends mapping and is used to exclude a particular mapping, for example if I have a
+Template mapping mapped to /{blog_title} but I want to exclude /cometd, I'd make a ExcludeMapping
+to exclude /cometd: ExcludeMapping("/cometd")
+**/
+case class ExcludeMapping(override val mapping: String) extends Mapping(mapping, classOf[View]){}
+
 
 /**
 This is a mapping that mirrors the @RequestMapping in Spring 3.0, so you use it like

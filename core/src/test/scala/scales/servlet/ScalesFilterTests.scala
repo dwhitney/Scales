@@ -150,6 +150,40 @@ class ScalesFilterTests extends Spec with MustMatchers{
 			verify(mockPrintWriter, never).print(<test></test>.toString)
 			verify(mockFilterChain).doFilter(mockRequest, mockResponse)
 		}
+		
+		it("must ignore mappings when they are ExcludeMappings"){
+			val(mockRequest, mockResponse, mockFilterChain, mockFilterConfig, mockServletContext, mockRequestDispatcher) = mockMe
+
+			//setup a test Config
+			object TestSettings extends Config{
+				override def urlMappings = new ExcludeMapping("/test.html") :: Nil
+			}
+			
+			//setup a test settings loader
+			trait TestSettingsLoader extends SettingsLoader{
+				override def urlMappings = TestSettings.urlMappings
+			}
+			
+			//setup a test ViewBuilder
+			trait TestViewBuilder extends ViewBuilder{
+				override def buildView(request: HttpServletRequest, response: HttpServletResponse, mapping: Mapping[_ <: View]): Option[String] = Some(<test></test>.toString)
+			}
+			
+			//mock java.io.PrintWriter
+			val mockPrintWriter = mock(classOf[java.io.PrintWriter])
+			
+			//setup mocks
+			when(mockRequest.getRequestURI).thenReturn("/test.html", null)
+			when(mockRequest.getContextPath).thenReturn("", null)
+			when(mockResponse.getWriter).thenReturn(mockPrintWriter)
+			
+			val filter = new ScalesFilter with TestSettingsLoader with TestViewBuilder
+			filter.doFilter(mockRequest, mockResponse, mockFilterChain)
+			
+			verify(mockRequest).getRequestURI
+			verify(mockPrintWriter, never).print(<test></test>.toString)
+			verify(mockFilterChain).doFilter(mockRequest, mockResponse)
+		}
 	}
 	
 	//creates a bunck of mock objects
